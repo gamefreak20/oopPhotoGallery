@@ -30,8 +30,10 @@ $users = User::find_all();
                   <div class="col-lg-12">
                       <h1 class="page-header">
                           users
-                          <small>Subheading</small>
                       </h1>
+
+                    <a href="add_user.php" class="btn btn-primary">Add user</a>
+
                       <div class="col-md-12">
                         <table class="table table-hover">
                           <thead>
@@ -54,7 +56,6 @@ $users = User::find_all();
                                 <div class="action_links">
                                   <a href="delete_user.php?id=<?php echo $user->id ?>">Delete</a>
                                   <a href="edit_user.php?id=<?php echo $user->id ?>">Edit</a>
-                                  <a href="#">View</a>
                                 </div>
                               </td>
 
