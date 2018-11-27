@@ -1,3 +1,31 @@
+<?php
+
+require_once("admin/includes/init.php");
+
+if (empty($_GET['id'])) {
+  redirect("index.php");
+}
+
+$photo = Photo::find_by_id($_GET['id']);
+
+if(isset($_POST['submit'])){
+  $author = trim($_POST['author']);
+  $body = trim($_POST['body']);
+
+  $new_comment = Comment::create_comment($photo->id, $author, $body);
+
+  if($new_comment && $new_comment->save()) {
+    redirect("photo.php?id={$photo->id}");
+  } else {
+    $message = "There was some problems saving.";
+  }
+
+} else {
+  $author = "";
+  $body = "";
+}
+
+ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -102,60 +130,47 @@
                 <!-- Blog Comments -->
 
                 <!-- Comments Form -->
+
+
                 <div class="well">
                     <h4>Leave a Comment:</h4>
-                    <form role="form">
+                    <form role="form" method="post">
+                      <div class="form-group">
+                        <label for="author">author</label>
+                          <input type="text" name="author" class="form-control">
+                      </div>
                         <div class="form-group">
-                            <textarea class="form-control" rows="3"></textarea>
+                            <textarea class="form-control" name="body" rows="3"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" name="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
+
+              </div>
 
                 <hr>
 
                 <!-- Posted Comments -->
+                <?php
+                $allComments = Comment::find_the_comments($photo->id);
 
+                foreach ($allComments as $comment) {
+
+                 ?>
                 <!-- Comment -->
                 <div class="media">
                     <a class="pull-left" href="#">
                         <img class="media-object" src="http://placehold.it/64x64" alt="">
                     </a>
                     <div class="media-body">
-                        <h4 class="media-heading">Start Bootstrap
+                        <h4 class="media-heading"><?php echo $comment->author; ?>
                             <small>August 25, 2014 at 9:30 PM</small>
                         </h4>
-                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                        <?php echo $comment->body; ?>
                     </div>
                 </div>
+              <?php } ?>
 
-                <!-- Comment -->
-                <div class="media">
-                    <a class="pull-left" href="#">
-                        <img class="media-object" src="http://placehold.it/64x64" alt="">
-                    </a>
-                    <div class="media-body">
-                        <h4 class="media-heading">Start Bootstrap
-                            <small>August 25, 2014 at 9:30 PM</small>
-                        </h4>
-                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                        <!-- Nested Comment -->
-                        <div class="media">
-                            <a class="pull-left" href="#">
-                                <img class="media-object" src="http://placehold.it/64x64" alt="">
-                            </a>
-                            <div class="media-body">
-                                <h4 class="media-heading">Nested Start Bootstrap
-                                    <small>August 25, 2014 at 9:30 PM</small>
-                                </h4>
-                                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                            </div>
-                        </div>
-                        <!-- End Nested Comment -->
-                    </div>
-                </div>
-
-            </div>
 
             <!-- Blog Sidebar Widgets Column -->
             <div class="col-md-4">
